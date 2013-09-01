@@ -14,7 +14,7 @@ function _psr0_paths_for_name($name) {
       return array();
     }
     
-    foreach (array('/lib/', "/lib/Drupal/$name/") as $prefix) {
+    foreach (array('/lib/', "/lib/Drupal/$name/", '/src/') as $prefix) {
       if (file_exists($module_path . $prefix)) {
         $paths[$name][] = $module_path . $prefix;
       }
@@ -25,13 +25,12 @@ function _psr0_paths_for_name($name) {
 
 
 function psr0_autoloader($fq_class) {
-  $parts = explode('\\', $fq_class);
-  if (count($parts) < 3 || array_shift($parts) != 'Drupal')
+  $parts = explode('\\', $fq_class, 3);
+  if (count($parts) < 3 || $parts[0] != 'Drupal')
     return;
 
-  $module = array_shift($parts);
-  $paths = _psr0_paths_for_name($module);
-  $file_part = implode('/', $parts) . '.php';
+  $paths = _psr0_paths_for_name($parts[1]);
+  $file_part = strtr($parts[2], '_\\', '//') . '.php';
   
   foreach ($paths as $p) {
     $file = $p . $file_part;
