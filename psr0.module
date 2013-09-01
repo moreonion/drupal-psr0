@@ -1,0 +1,47 @@
+<?php
+
+spl_autoload_register('psr0_autoloader');
+
+function _psr0_paths_for_name($name) {
+  static $paths = array();
+  if (!isset($paths[$name])) {
+    $paths[$name] = array();
+    if ($path = drupal_get_path('module', $name)) {
+      $module_path = $path;
+    } elseif ($path = drupal_get_path('profile', $name)) {
+      $module_path = $path;
+    } else {
+      return array();
+    }
+    
+    foreach (array('/lib/', "/lib/Drupal/$name/") as $prefix) {
+      if (file_exists($module_path . $prefix)) {
+        $paths[$name][] = $module_path . $prefix;
+      }
+    }
+  }
+  return $paths[$name];
+}
+
+
+function psr0_autoloader($fq_class) {
+  $parts = explode('\\', $fq_class);
+  if (count($parts) < 3 || array_shift($parts) != 'Drupal')
+    return;
+
+  $module = array_shift($parts);
+  $paths = _psr0_paths_for_name($module);
+  $file_part = implode('/', $parts) . '.php';
+  
+  foreach ($paths as $p) {
+    $file = $p . $file_part;
+    if (file_exists($file)) {
+      require_once $file;
+      return;
+    }
+  }
+}
+
+// Tells Drupal that it has to include this module
+// even before invoking hook_boot().
+function psr0_boot() {}

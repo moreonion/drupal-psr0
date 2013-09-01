@@ -1,0 +1,3 @@
+name = PSR0
+description = a PSR-0 and PSR-4 autoloader following the KISS principle with built-in early bootstrap.
+core = 7.x
