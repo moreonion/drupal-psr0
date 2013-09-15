@@ -1,5 +1,7 @@
 <?php
 
+require_once DRUPAL_ROOT . '/includes/common.inc';
+
 spl_autoload_register('psr0_autoloader');
 
 function _psr0_paths_for_name($name) {
@@ -33,7 +35,7 @@ function psr0_autoloader($fq_class) {
   $file_part = strtr($parts[2], '_\\', '//') . '.php';
   
   foreach ($paths as $p) {
-    $file = $p . $file_part;
+    $file = DRUPAL_ROOT . '/' . $p . $file_part;
     if (file_exists($file)) {
       require_once $file;
       return;
