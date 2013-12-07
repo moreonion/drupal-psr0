@@ -1,12 +1,12 @@
 -- SUMMARY --
 
 This module implements a simple PSR-4 class autoloader for Drupal modules and
-profiles. Take a look at the following examples for classes and where PSR-4 tries
-to find their declaration.
+profiles. Take a look at the following examples for classes and where PSR-4
+tries to find their declaration.
 
   Drupal\your_module\YourClass -> your_module/lib/YourClass.php
   Drupal\your_module\SomeInterface -> your_module/lib/SomeInterface.php
-  Drupal\your_module\SubNamespace\Class -> your_module/lib/SubNamespace/Class.php
+  Drupal\your_module\Namespace\Class -> your_module/lib/Namespace/Class.php
   Drupal\your_profile\SomeClass -> profiles/your_profile/lib/SomeClass.php
 
 -- REQUIREMENTS --
@@ -15,7 +15,7 @@ to find their declaration.
 
 -- INSTALLATION --
 
-* Install as usual, see https://drupal.org/documentation/install/modules-themes/modules-7 for further information.
+* Install as usual, see https://drupal.org/node/895323 for further information.
 * Works as soon as the module is enabled without further configuration.
 
 -- FAQ --
