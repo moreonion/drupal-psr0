@@ -37,6 +37,9 @@ function _psr0_paths_for_name($name) {
     if (file_exists($module_path . '/lib/')) {
       $paths[$name][] = $module_path . '/lib/';
     }
+    if (file_exists($module_path . '/src/')) {
+      $paths[$name][] = $module_path . '/src/';
+    }
   }
 
   return $paths[$name];
