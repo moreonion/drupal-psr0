@@ -32,7 +32,7 @@ function _psr0_paths_for_name($name) {
 
   $paths[$name] = array();
 
-  if (($path = drupal_get_path('module', $name)) || ($path = drupal_get_path('profile', $name))) {
+  if (($path = DRUPAL_ROOT . '/' . drupal_get_path('module', $name)) || ($path = DRUPAL_ROOT . '/' . drupal_get_path('profile', $name))) {
     $module_path = $path;
     if (file_exists($module_path . '/lib/')) {
       $paths[$name][] = $module_path . '/lib/';
@@ -41,7 +41,6 @@ function _psr0_paths_for_name($name) {
       $paths[$name][] = $module_path . '/src/';
     }
   }
-
   return $paths[$name];
 }
 
@@ -64,7 +63,7 @@ function psr0_autoloader($fq_class) {
   $file_part = strtr($parts[2], '\\', '/') . '.php';
 
   foreach ($paths as $p) {
-    $file = DRUPAL_ROOT . '/' . $p . $file_part;
+    $file = $p . $file_part;
     if (file_exists($file)) {
       require_once $file;
       return;
