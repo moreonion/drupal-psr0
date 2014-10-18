@@ -16,32 +16,38 @@ spl_autoload_register('psr0_autoloader');
  *
  * @param string $name
  *   Name of the project.
+ * @param bool $tests
+ *   Whether we are looking for the Tests sub-namespace.
  *
  * @return array
  *   Array of possible path prefixes for this project name.
  */
-function _psr0_paths_for_name($name) {
+function _psr0_paths_for_name($name, $tests) {
   // Use the advanced drupal_static() pattern, since this is called very often.
+  $cname = $tests ? "main:$name" : "tests:$name";
   static $paths;
   if (!isset($paths)) {
     $paths = &drupal_static(__FUNCTION__, array());
   }
-  if (isset($paths[$name])) {
-    return $paths[$name];
+  if (isset($paths[$cname])) {
+    return $paths[$cname];
   }
 
-  $paths[$name] = array();
+  $paths[$cname] = array();
 
   if (($path = DRUPAL_ROOT . '/' . drupal_get_path('module', $name)) || ($path = DRUPAL_ROOT . '/' . drupal_get_path('profile', $name))) {
     $module_path = $path;
+    if ($tests) {
+      $module_path .= '/tests';
+    }
     if (file_exists($module_path . '/lib/')) {
-      $paths[$name][] = $module_path . '/lib/';
+      $paths[$cname][] = $module_path . '/lib/';
     }
     if (file_exists($module_path . '/src/')) {
-      $paths[$name][] = $module_path . '/src/';
+      $paths[$cname][] = $module_path . '/src/';
     }
   }
-  return $paths[$name];
+  return $paths[$cname];
 }
 
 /**
@@ -53,14 +59,18 @@ function _psr0_paths_for_name($name) {
  *   A fully qualified class name.
  */
 function psr0_autoloader($fq_class) {
-  $parts = explode('\\', $fq_class, 3);
+  $parts = explode('\\', $fq_class, 4);
+  $cnt = count($parts);
   // Do nothing if this doesn't look like a PSR-4 class name.
-  if (count($parts) < 3 || $parts[0] != 'Drupal') {
+  if ($cnt < 3 || $parts[0] != 'Drupal') {
     return;
   }
+  $project_name = $parts[1];
+  $tests = ($parts[2] == 'Tests' && $cnt == 4);
+  $class = $tests ? $parts[3] : implode('\\', array_slice($parts, 2));
 
-  $paths = _psr0_paths_for_name($parts[1]);
-  $file_part = strtr($parts[2], '\\', '/') . '.php';
+  $paths = _psr0_paths_for_name($project_name, $tests);
+  $file_part = strtr($class, '\\', '/') . '.php';
 
   foreach ($paths as $p) {
     $file = $p . $file_part;
