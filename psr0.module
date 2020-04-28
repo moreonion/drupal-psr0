@@ -35,7 +35,7 @@ function _psr0_paths_for_name($name, $tests) {
 
   $paths[$cname] = array();
 
-  if ($path = drupal_get_path('module', $name)) {
+  if (module_exists($name) && ($path = drupal_get_path('module', $name))) {
     $module_path = DRUPAL_ROOT . '/' . $path;
     if ($tests) {
       if (file_exists($module_path . '/lib/Tests/')) {
